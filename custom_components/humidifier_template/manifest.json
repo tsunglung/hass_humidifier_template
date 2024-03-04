@@ -1,0 +1,9 @@
+{
+  "domain": "humidifier_template",
+  "name": "Humidifier Template",
+  "documentation": "https://github.com/tsunglung/hass_humidifier_template",
+  "requirements": [],
+  "codeowners": ["@tsunglung"],
+  "iot_class": "calculated",
+  "version": "0.0.0"
+}
