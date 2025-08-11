@@ -221,22 +221,23 @@ class TemplateHumidifier(TemplateEntity, HumidifierEntity, RestoreEntity):
 
     def __init__(self, hass: HomeAssistant, config: ConfigType):
         """Initialize the humidifier."""
+
+        config_name = config[CONF_NAME]
+        config[CONF_NAME] = None
         super().__init__(
             hass,
-            availability_template=config.get(CONF_AVAILABILITY_TEMPLATE),
-            icon_template=config.get(CONF_ICON_TEMPLATE),
-            entity_picture_template=config.get(CONF_ENTITY_PICTURE_TEMPLATE),
+            config=config,
+            unique_id=config.get(
+                CONF_UNIQUE_ID,
+                f"template_humidifier_{config_name.lower().replace(" ", "_")}"
+            )
         )
         self.hass = hass
         self.entity_id = async_generate_entity_id(
             ENTITY_ID_FORMAT, config[CONF_NAME], hass=hass
         )
         self._config = config
-        self._attr_unique_id = config.get(
-            CONF_UNIQUE_ID,
-            f"template_humidifier_{config[CONF_NAME].lower().replace(" ", "_")}"
-        )
-        self._attr_name = config[CONF_NAME]
+        self._attr_name = config_name
         self._attr_min_humidity = config.get(CONF_HUMIDITY_MIN, MIN_HUMIDITY)
         self._attr_max_humidity = config.get(CONF_HUMIDITY_MAX, MAX_HUMIDITY)
         self._state_template = config.get(CONF_STATE_TEMPLATE, None)
@@ -383,7 +384,7 @@ class TemplateHumidifier(TemplateEntity, HumidifierEntity, RestoreEntity):
         """Return if the humidifier is on."""
         return self._state
 
-    async def async_set_humidity(self, humidity):
+    async def async_set_humidity(self, humidity: int) -> None:
         """Set target humidity."""
         self._target_humidity = humidity
 
